@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TENGWEI - Matrix Rain</title>
+    <title>tengwei.me - AI Matrix Awakening</title>
     <style>
         /* ================= 基础重置 ================= */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -57,6 +57,7 @@
             filter: blur(0.4px); 
         }
 
+        /* 鼠标探照灯全局光晕 */
         #mouse-glow {
             position: absolute;
             width: 400px; height: 400px;
@@ -84,6 +85,7 @@
             transform: translate(-50%, -50%) scale(0.4);
         }
 
+        /* 水波纹拖尾 */
         #cursor-trail {
             position: fixed;
             top: 0; left: 0;
@@ -116,9 +118,9 @@
         h1 {
             font-size: 6vw;
             font-weight: 200;
-            letter-spacing: 15px;
+            letter-spacing: 12px;
             margin-bottom: 20px;
-            margin-right: -15px; 
+            margin-right: -12px; 
             color: #ffffff;
             text-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 255, 204, 0.3);
             min-height: 8vw; 
@@ -127,7 +129,36 @@
             justify-content: center;
         }
 
-        /* 新增：终端故障闪烁特效 */
+        /* AI 思考圈动画 */
+        #thinking-spinner {
+            display: none; 
+            width: 3vw;
+            height: 3vw;
+            border: 3px solid rgba(0, 255, 204, 0.1);
+            border-top-color: #00ffcc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 终端打字光标 */
+        #ai-cursor {
+            display: none; 
+            color: #00ffcc;
+            font-weight: 400;
+            animation: blink 1s step-end infinite;
+            margin-left: 5px;
+            text-shadow: 0 0 15px #00ffcc;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* CRT 故障闪烁特效 */
         .subtitle {
             font-family: monospace;
             font-size: 13px;
@@ -208,7 +239,11 @@
     <div id="mouse-glow"></div>
 
     <div class="center-content" id="main-content">
-        <h1 data-value="TENGWEI"></h1>
+        <h1>
+            <div id="thinking-spinner"></div>
+            <span id="ai-text" style="text-transform: none;"></span>
+            <span id="ai-cursor">█</span>
+        </h1>
         <div class="subtitle">Software Engineer | System Architect</div>
     </div>
 
@@ -227,40 +262,74 @@
     <div class="coordinates">
         SYS.MATRIX // OVERRIDE<br>
         POS: 45.4215° N, 75.6972° W<br>
-        STATUS: ENCRYPTED
+        STATUS: ONLINE
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // 包含拉丁字母、数字和半角日文片假名的矩阵字符集
             const matrixCharsSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ';
             
-            // ================= 1. 优化版：慢速字符乱码破译 =================
-            function startCyberDecrypt() {
-                const titleElement = document.querySelector('h1');
-                const finalStr = titleElement.getAttribute('data-value');
-                let iterations = 0;
+            // ================= 1. AI 多级思考打字推演序列 =================
+            function startAITyping() {
+                // 定义推演序列：思考的四个阶段
+                const thoughtSequence = ["allen", "cuitengwei", "tengwei", "tengwei.me"];
+                let step = 0;
                 
-                titleElement.innerText = '';
+                const spinner = document.getElementById('thinking-spinner');
+                const textContainer = document.getElementById('ai-text');
+                const cursorBlock = document.getElementById('ai-cursor');
                 
-                const decryptInterval = setInterval(() => {
-                    titleElement.innerText = finalStr.split('').map((char, index) => {
-                        // 增大了分母(从4改为8)，让锁定过程变慢，更有黑客解密的沉重感
-                        if (index < iterations / 8) {
-                            return finalStr[index];
+                // 展示思考圈
+                spinner.style.display = 'block';
+                textContainer.innerText = '';
+                
+                setTimeout(() => {
+                    spinner.style.display = 'none'; 
+                    cursorBlock.style.display = 'inline-block'; 
+                    
+                    // 递归执行推演步骤
+                    function processStep() {
+                        if (step >= thoughtSequence.length) return; 
+                        
+                        const currentText = thoughtSequence[step];
+                        const isLast = (step === thoughtSequence.length - 1);
+                        let charIndex = 0;
+                        
+                        // 打字推演
+                        function typeChar() {
+                            if (charIndex < currentText.length) {
+                                textContainer.innerText += currentText.charAt(charIndex);
+                                charIndex++;
+                                setTimeout(typeChar, Math.random() * 150 + 80);
+                            } else {
+                                if (!isLast) {
+                                    // 停顿思考后推翻重来
+                                    setTimeout(deleteChar, Math.random() * 600 + 600);
+                                }
+                            }
                         }
-                        return matrixCharsSet[Math.floor(Math.random() * matrixCharsSet.length)];
-                    }).join('');
-                    
-                    iterations++;
-                    
-                    if (iterations >= finalStr.length * 8) {
-                        clearInterval(decryptInterval);
-                        titleElement.innerText = finalStr;
+                        
+                        // 快速回删否定
+                        function deleteChar() {
+                            if (textContainer.innerText.length > 0) {
+                                textContainer.innerText = textContainer.innerText.slice(0, -1);
+                                setTimeout(deleteChar, 40);
+                            } else {
+                                step++;
+                                setTimeout(processStep, 300);
+                            }
+                        }
+                        
+                        typeChar(); 
                     }
-                }, 50); // 稍微放慢了乱码跳动帧率
+
+                    processStep(); 
+
+                }, 1500); // 初始思考光圈持续时间
             }
 
-            // ================= 2. 模拟加载器 =================
+            // ================= 2. 模拟系统加载器 =================
             let progress = 0;
             const progressText = document.getElementById('progress-text');
             const progressFill = document.getElementById('progress-fill');
@@ -276,16 +345,17 @@
                         loader.style.opacity = '0';
                         setTimeout(() => {
                             mainContent.classList.add('loaded');
-                            startCyberDecrypt();
+                            // 触发 AI 推演序列
+                            startAITyping();
                             setTimeout(() => { loader.remove(); }, 1000);
                         }, 300);
                     }, 400);
                 }
-                progressText.innerText = `MATRIX.INIT // ${progress}%`;
+                progressText.innerText = `SYS.WAKEUP // ${progress}%`;
                 progressFill.style.width = `${progress}%`;
             }, 40);
 
-            // ================= 3. 鼠标、星空球与随动波浪尾迹 =================
+            // ================= 3. 鼠标追踪与水波纹尾迹 =================
             const cursor = document.getElementById('custom-cursor');
             const cursorTrail = document.getElementById('cursor-trail');
             const mouseGlow = document.getElementById('mouse-glow');
@@ -308,23 +378,18 @@
                 mouseGlow.style.left = mouseX + 'px';
                 mouseGlow.style.top = mouseY + 'px';
 
-                // 生成随动波浪尾迹
+                // 生成随动涟漪
                 let dist = Math.hypot(mouseX - lastRippleX, mouseY - lastRippleY);
                 if (dist > 35) { 
                     ripplesArray.push({
-                        x: mouseX, 
-                        y: mouseY, 
-                        radius: 5, 
-                        alpha: 0.15, 
-                        speed: 1.5,  
-                        width: 0.8
+                        x: mouseX, y: mouseY, radius: 5, alpha: 0.15, speed: 1.5, width: 0.8
                     });
                     lastRippleX = mouseX;
                     lastRippleY = mouseY;
                 }
             });
 
-            // ================= 4. 黑客帝国代码雨 =================
+            // ================= 4. 黑客帝国代码雨引擎 =================
             const canvas = document.getElementById('matrixCanvas');
             const ctx = canvas.getContext('2d');
             
@@ -340,6 +405,7 @@
                 drops[x] = Math.random() * -100; 
             }
 
+            // 点击产生强力雷达波与代码逆流
             window.addEventListener('mousedown', (e) => {
                 cursor.classList.add('clicked');
                 
@@ -365,6 +431,7 @@
                 cursor.classList.remove('clicked');
             });
 
+            // 绘制数字波纹
             function drawRipples() {
                 for (let i = 0; i < ripplesArray.length; i++) {
                     let r = ripplesArray[i];
@@ -373,13 +440,13 @@
                     ctx.strokeStyle = `rgba(0, 255, 204, ${r.alpha})`;
                     ctx.lineWidth = r.width;
                     ctx.stroke();
-
                     r.radius += r.speed; 
                     r.alpha -= 0.01; 
                 }
                 ripplesArray = ripplesArray.filter(r => r.alpha > 0);
             }
 
+            // 绘制下落代码雨
             function drawMatrix() {
                 ctx.fillStyle = 'rgba(2, 2, 2, 0.08)';
                 ctx.fillRect(0, 0, width, height);
@@ -395,6 +462,7 @@
                     let dy = mouseY - dropY;
                     let distance = Math.sqrt(dx * dx + dy * dy);
 
+                    // 探照灯解码交互
                     if (distance < 80) {
                         ctx.fillStyle = '#ffffff';
                         dropX += (Math.random() - 0.5) * 2; 
@@ -413,9 +481,11 @@
                 }
             }
 
+            // 主动画循环
             function animate() {
                 setTimeout(() => { requestAnimationFrame(animate); }, 30); 
                 
+                // 弹性延迟算法插值
                 trailX += (mouseX - trailX) * 0.2;
                 trailY += (mouseY - trailY) * 0.2;
                 cursorTrail.style.left = trailX + 'px';
@@ -425,6 +495,7 @@
                 drawRipples(); 
             }
 
+            // 窗口尺寸自适应
             window.addEventListener('resize', () => {
                 width = canvas.width = window.innerWidth;
                 height = canvas.height = window.innerHeight;
@@ -434,6 +505,7 @@
 
             animate();
             
+            // UI 元素悬浮交互
             document.querySelectorAll('.ui-element').forEach(el => {
                 el.addEventListener('mouseenter', () => {
                     cursorTrail.style.width = '50px';
