@@ -157,50 +157,40 @@
             50% { opacity: 0; }
         }
 
-        /* ================= 电视信号干扰特效 (TV Signal Glitch) ================= */
+        /* ================= 【核心优化】黑白电视显像管信号特效 ================= */
         .tv-signal {
-            animation: analog-tv-signal 7s infinite alternate;
+            /* 强制覆盖为黑白色调，抽离青绿色 */
+            color: #e2e2e2 !important; 
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6) !important;
+            animation: bw-analog-tv 7s infinite;
         }
 
-        @keyframes analog-tv-signal {
-            0%, 15%, 35%, 65%, 85%, 100% { 
-                opacity: 1; 
-                filter: blur(0); 
-                text-shadow: 0 0 20px rgba(0, 255, 204, 0.3); 
-                transform: translate(0) skewX(0);
-            }
-            18% { 
-                opacity: 0.6; 
-                filter: blur(0.5px); 
-            }
-            20% { 
-                opacity: 0.2; 
-                filter: blur(1.5px); 
-                transform: translateX(-2px) skewX(-2deg);
-                /* 模拟 RGB 色差分离 */
-                text-shadow: 3px 0 0 rgba(255, 0, 85, 0.6), -3px 0 0 rgba(0, 255, 255, 0.6);
-            }
-            22% { 
+        @keyframes bw-analog-tv {
+            /* 基础状态：褪色为黑白，略微带点模糊的老电视感 */
+            0%, 100% { 
                 opacity: 0.9; 
-                filter: blur(0); 
-                transform: translate(0);
+                filter: grayscale(100%) contrast(1.1); 
+                transform: skewX(0) scaleY(1); 
             }
-            68% { 
-                opacity: 0.4; 
-                filter: blur(1px); 
-                text-shadow: -2px 0 0 rgba(0, 255, 0, 0.5), 2px 0 0 rgba(255, 0, 255, 0.5);
-            }
-            70% { 
-                opacity: 0.8; 
-                transform: translateX(2px) skewX(3deg);
-            }
-            72% { 
-                transform: translateX(0) skewX(0);
-            }
-            88% { 
-                opacity: 0.5; 
-                filter: blur(0.8px);
-            }
+            /* 轻微电压不稳：亮度下降 */
+            10% { opacity: 0.7; filter: grayscale(100%) brightness(0.8) blur(0.5px); }
+            /* 电子束高光闪烁 */
+            11% { opacity: 1; filter: grayscale(100%) brightness(1.6) blur(1.5px); transform: skewX(1deg); } 
+            12% { opacity: 0.9; filter: grayscale(100%) contrast(1.1); transform: skewX(0); }
+            /* 持续平稳的黑白画面 */
+            15%, 45% { opacity: 0.85; filter: grayscale(100%) contrast(1.2); }
+            /* 失去同步信号：画面严重撕裂与重影 (B&W Ghosting) */
+            46% { 
+                opacity: 0.3; 
+                filter: grayscale(100%) blur(2px) contrast(1.5); 
+                transform: translateX(-4px) skewX(-3deg); 
+                text-shadow: 6px 0 0 rgba(150,150,150,0.8), -6px 0 0 rgba(200,200,200,0.8) !important; 
+            } 
+            48% { opacity: 0.9; filter: grayscale(100%); transform: translateX(0); }
+            75% { opacity: 0.8; filter: grayscale(100%) brightness(0.9); }
+            /* 垂直跳帧 (V-Sync Loss) */
+            76% { opacity: 0.4; transform: scaleY(1.2) translateY(-2px); filter: grayscale(100%) blur(1px); } 
+            77% { opacity: 0.9; transform: scaleY(1) translateY(0); filter: grayscale(100%); }
         }
 
         /* 副标题轻微故障闪烁 */
@@ -286,7 +276,7 @@
     <div class="center-content" id="main-content">
         <h1>
             <div id="thinking-spinner"></div>
-            <span id="ai-text" style="text-transform: none; display: inline-block;"></span>
+            <span id="ai-text" style="text-transform: none; display: inline-block; transition: color 0.5s, text-shadow 0.5s;"></span>
             <span id="ai-cursor">█</span>
         </h1>
         <div class="subtitle">Software Engineer | System Architect</div>
@@ -347,9 +337,12 @@
                                     setTimeout(deleteChar, Math.random() * 600 + 600);
                                 } else {
                                     // 重点：当最后一句 tengwei.me 打完后，停顿 1.5 秒
-                                    // 然后为其挂载电视信号干扰的 CSS 动画
+                                    // 随后挂载【黑白电视显像管】干扰动画
                                     setTimeout(() => {
                                         textContainer.classList.add('tv-signal');
+                                        // 可选：让光标也随之变成黑白，或者直接隐藏光标让画面更纯粹
+                                        cursorBlock.style.color = '#e2e2e2';
+                                        cursorBlock.style.textShadow = '0 0 5px #fff';
                                     }, 1500);
                                 }
                             }
